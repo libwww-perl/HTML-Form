@@ -1,4 +1,14 @@
 _______________________________________________________________________________
+2012-02-18 HTML-Form 6.01
+
+Don't pick up label text from textarea [RT#72925]
+
+Restore perl-5.8.1 compatiblity.
+
+
+
+
+_______________________________________________________________________________
 2011-02-27 HTML-Form 6.00
 
 Initial release of HTML-Form as a separate distribution. There are no code
