@@ -20,7 +20,7 @@ WriteMakefile(
     },
     META_MERGE => {
 	resources => {
-            repository => 'http://github.com/gisle/libwww-perl/tree/HTML-Form/master',
+            repository => 'http://github.com/gisle/html-form',
 	    MailingList => 'mailto:libwww@perl.org',
         }
     },
