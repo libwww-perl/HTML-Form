@@ -74,9 +74,9 @@ relative action URIs.  The provided HTML document should be a Unicode string
 (or US-ASCII).
 
 By default HTML::Form assumes that the original document was UTF-8 encoded and
-thus encode forms that don't specify an explict I<accept-charset> as UTF-8.
+thus encode forms that don't specify an explicit I<accept-charset> as UTF-8.
 The charset assumed can be overridden by providing the C<charset> option to
-parse().  It's a good idea to be explict about this parameter as well, thus
+parse().  It's a good idea to be explicit about this parameter as well, thus
 the recommended simplest invocation becomes:
 
     my @forms = HTML::Form->parse(
