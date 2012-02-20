@@ -1,10 +1,16 @@
 _______________________________________________________________________________
+2012-02-20 HTML-Form 6.02
+
+Fix test failure when HTTP-Message 6.03 (or better) was installed [RT#75155]
+
+
+
+_______________________________________________________________________________
 2012-02-18 HTML-Form 6.01
 
 Don't pick up label text from textarea [RT#72925]
 
-Restore perl-5.8.1 compatiblity.
-
+Restore perl-5.8.1 compatibility.
 
 
 
