@@ -16,7 +16,7 @@ WriteMakefile(
         'Encode' => "2",
         'HTML::TokeParser' => 0,
 	'HTTP::Request' => 6,
-	'HTTP::Request::Common' => 6,
+	'HTTP::Request::Common' => 6.03,
     },
     META_MERGE => {
 	resources => {

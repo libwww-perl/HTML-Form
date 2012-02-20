@@ -81,10 +81,10 @@ EOT
 
 ok($f->click->as_string, <<'EOT');
 POST http://localhost/
-Content-Length: 69
+Content-Length: 75
 Content-Type: application/x-www-form-urlencoded
 
-i.x=1&i.y=1&c=on&r=b&t=&p=&h=xyzzy&f=&x=&a=%0Aabc%0A+++&s=bar&m=a&m=b
+i.x=1&i.y=1&c=on&r=b&t=&p=&h=xyzzy&f=&x=&a=%0D%0Aabc%0D%0A+++&s=bar&m=a&m=b
 EOT
 
 ok(@warn, 1);
