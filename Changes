@@ -1,4 +1,11 @@
 _______________________________________________________________________________
+2012-03-30 HTML-Form 6.03
+
+Support the new HTML5 input types without warning
+
+
+
+_______________________________________________________________________________
 2012-02-20 HTML-Form 6.02
 
 Fix test failure when HTTP-Message 6.03 (or better) was installed [RT#75155]
