@@ -30,6 +30,13 @@ my %type2class = (
  keygen   => "KeygenInput",
 );
 
+# The new HTML5 input types
+%type2class = (%type2class, map { $_ => 'TextInput' } qw(
+    tel search url email
+    datetime date month week time datetime-local
+    number range color
+));
+
 =head1 NAME
 
 HTML::Form - Class that represents an HTML form element

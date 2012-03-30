@@ -53,6 +53,8 @@ $f = HTML::Form->parse(<<'EOT', base => "http://localhost/", verbose => 1);
    <input name=r type="radio" value="b" checked>
    <input name=t type="text">
    <input name=p type="PASSWORD">
+   <input name=tel type="tel">
+   <input name=date type="date">
    <input name=h type="hidden" value=xyzzy>
    <input name=s type="submit" value="Doit!">
    <input name=r type="reset">
@@ -81,10 +83,10 @@ EOT
 
 ok($f->click->as_string, <<'EOT');
 POST http://localhost/
-Content-Length: 75
+Content-Length: 86
 Content-Type: application/x-www-form-urlencoded
 
-i.x=1&i.y=1&c=on&r=b&t=&p=&h=xyzzy&f=&x=&a=%0D%0Aabc%0D%0A+++&s=bar&m=a&m=b
+i.x=1&i.y=1&c=on&r=b&t=&p=&tel=&date=&h=xyzzy&f=&x=&a=%0D%0Aabc%0D%0A+++&s=bar&m=a&m=b
 EOT
 
 ok(@warn, 1);
