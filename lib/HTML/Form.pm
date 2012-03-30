@@ -129,11 +129,14 @@ the default for accept_charset.  If not provided this defaults to "UTF-8".
 =item C<< verbose => $bool >>
 
 Warn (print messages to STDERR) about any bad HTML form constructs found.
-You can trap these with $SIG{__WARN__}.
+You can trap these with $SIG{__WARN__}.  The default is not to issue warnings.
 
 =item C<< strict => $bool >>
 
 Initialize any form objects with the given strict attribute.
+If the strict is turned on the methods that change values of the form will croak if you try
+to set illegal values or modify readonly fields.
+The default is not to be strict.
 
 =back
 
