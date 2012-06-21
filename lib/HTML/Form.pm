@@ -472,17 +472,17 @@ This method is used to locate specific inputs within the form.  All
 inputs that match the arguments given are returned.  In scalar context
 only the first is returned, or C<undef> if none match.
 
-If $selector is specified, then the input's name, id, class attribute must
+If $selector is not C<undef>, then the input's name, id, class attribute must
 match.  A selector prefixed with '#' must match the id attribute of the input.
 A selector prefixed with '.' matches the class attribute.  A selector prefixed
 with '^' or with no prefix matches the name attribute.
 
-If $type is specified, then the input must have the specified type.
+If $type is not C<undef>, then the input must have the specified type.
 The following type names are used: "text", "password", "hidden",
 "textarea", "file", "image", "submit", "radio", "checkbox" and "option".
 
 The $index is the sequence number of the input matched where 1 is the
-first.  If combined with $name and/or $type then it select the I<n>th
+first.  If combined with $name and/or $type, then it selects the I<n>th
 input with the given name and/or type.
 
 =cut
