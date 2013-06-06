@@ -119,7 +119,7 @@ behaves.  The following are all the options currently recognized:
 
 =item C<< base => $uri >>
 
-This is the URI used to retrive the original document.  This option is not optional ;-)
+This is the URI used to retrieve the original document.  This option is not optional ;-)
 
 =item C<< charset => $str >>
 
@@ -285,10 +285,10 @@ sub parse
 				$tag eq "select" ||
 				$tag eq "keygen")
 			    {
-				# MSIE implictly terminate the <select> here, so we
+				# MSIE implicitly terminates the <select> here, so we
 				# try to do the same.  Actually the MSIE behaviour
 				# appears really strange:  <input> and <textarea>
-				# do implictly close, but not <select>, <keygen> or
+				# do implicitly close, but not <select>, <keygen> or
 				# </form>.
 				my $type = ($tag =~ s,^/,,) ? "E" : "S";
 				$p->unget_token([$type, $tag, @$t]);
@@ -341,7 +341,7 @@ sub push_input
     push(@extra, strict => 1) if $self->{strict};
     if ($type eq "file" && exists $attr->{value}) {
 	# it's not safe to trust the value set by the server
-	# the user always need to explictly set the names of files to upload
+	# the user always needs to explicitly set the names of files to upload
 	$attr->{orig_value} = delete $attr->{value};
     }
     delete $attr->{type}; # don't confuse the type argument
@@ -383,7 +383,7 @@ charset as specified by the 'charset' parameter of the parse() method.
 =cut
 
 BEGIN {
-    # Set up some accesor
+    # Set up some accessors
     for (qw(method action enctype accept_charset)) {
 	my $m = $_;
 	no strict 'refs';
@@ -1205,7 +1205,7 @@ sub add_to_form
     my $prev = $form->find_input($self->{name}, $self->{type}, $self->{idx});
     return $self->SUPER::add_to_form($form) unless $prev;
 
-    # merge menues
+    # merge menus
     $prev->{current} = @{$prev->{menu}} if exists $self->{current};
     push(@{$prev->{menu}}, $m);
 }
