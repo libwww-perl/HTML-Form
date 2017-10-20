@@ -3,7 +3,7 @@
 use strict;
 use Test qw(plan ok);
 
-plan tests => 127;
+plan tests => 129;
 
 use HTML::Form;
 
@@ -595,3 +595,33 @@ $f = HTML::Form->parse(<<EOT, "http://www.example.com");
 </form>
 EOT
 ok(@warn, 0);
+
+$f = HTML::Form->parse(<<EOT, base => "http://localhost/");
+<form method=post>
+<form action="test" method="post">
+<button type="submit" name="submit" value="go">run</button>
+</form>
+EOT
+
+ok($f->click->as_string, <<EOT);
+POST http://localhost/
+Content-Length: 9
+Content-Type: application/x-www-form-urlencoded
+
+submit=go
+EOT
+
+$f = HTML::Form->parse(<<EOT, base => "http://localhost/");
+<form method=post>
+<form action="test" method="post">
+<button type="submit" name="submit">run</button>
+</form>
+EOT
+
+ok($f->click->as_string, <<EOT);
+POST http://localhost/
+Content-Length: 7
+Content-Type: application/x-www-form-urlencoded
+
+submit=
+EOT
