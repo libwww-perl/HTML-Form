@@ -1554,7 +1554,7 @@ sub form_name_value {
 	my $fn = shift @$file;
 	push(@headers, @$file);
 	$file = $f;
-	$filename = $fn unless defined $filename;
+	$filename = $fn;
     }
 
     return ($name => [$file, $filename, @headers]);
