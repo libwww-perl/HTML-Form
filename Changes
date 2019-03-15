@@ -2,6 +2,7 @@ Change history for HTML-Form
 
 {{$NEXT}}
     - Convert to Dist::Zilla
+    - Add an autocomplete method (GH #13) (Olaf Alders)
 
 6.03      2012-03-30
     - Support the new HTML5 input types without warning

@@ -927,6 +927,11 @@ croak if you try.
 You will also be able to set the value of read-only inputs, but a
 warning will be generated if running under C<perl -w>.
 
+=item $autocomplete = $input->autocomplete
+
+=item $input->autocomplete( $new_autocomplete )
+
+This method can be used to get/set the current value (if any) of C<autcomplete> for the input.
 =cut
 
 sub name
@@ -970,6 +975,14 @@ sub value
     my $self = shift;
     my $old = $self->{value};
     $self->{value} = shift if @_;
+    $old;
+}
+
+sub autocomplete
+{
+    my $self = shift;
+    my $old = $self->{autocomplete};
+    $self->{autocomplete} = shift if @_;
     $old;
 }
 
