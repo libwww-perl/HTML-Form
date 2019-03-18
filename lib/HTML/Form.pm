@@ -501,7 +501,7 @@ sub find_input
 	    push(@res, $_);
 	}
 	return @res;
-	
+
     }
     else {
 	$no ||= 1;
