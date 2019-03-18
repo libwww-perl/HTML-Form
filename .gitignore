@@ -1,9 +1,11 @@
+blib
+.build
+HTML-Form-*
 Makefile
 Makefile.old
-blib
 pm_to_blib
 SSL
+*.tar.gz
 t/CAN_TALK_TO_OURSELF
 t/live/ENABLED
-*.tar.gz
 xx*
