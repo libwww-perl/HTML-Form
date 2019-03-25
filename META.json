@@ -141,6 +141,7 @@
                   "exclude_filename" : [
                      "LICENSE",
                      "META.json",
+                     "Makefile.PL",
                      "README.md",
                      "cpanfile"
                   ],
@@ -184,7 +185,7 @@
                },
                "Dist::Zilla::Role::ModuleMetadata" : {
                   "Module::Metadata" : "1.000033",
-                  "version" : "0.006"
+                  "version" : "0.004"
                }
             },
             "name" : "MetaProvides::Package",
@@ -390,6 +391,7 @@
                   "spell_cmd" : "aspell list",
                   "stopwords" : [
                      "CGI",
+                     "autocomplete",
                      "checkbox",
                      "readonly",
                      "unsetting",
