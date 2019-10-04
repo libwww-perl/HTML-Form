@@ -326,7 +326,7 @@ sub new {
 }
 
 =item $form->push_input( $type, \%attr, $verbose )
- 
+
 This method adds additional inputs to the form.
 The first argument is the type of input (e.g. hidden, option, etc.).
 The second argument is a reference to a hash of the input attributes.
