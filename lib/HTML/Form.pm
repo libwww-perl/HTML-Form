@@ -37,9 +37,7 @@ my %type2class = (
     number range color
 ));
 
-=head1 NAME
-
-HTML::Form - Class that represents an HTML form element
+# ABSTRACT: Class that represents an HTML form element
 
 =head1 SYNOPSIS
 
