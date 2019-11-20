@@ -482,6 +482,10 @@ sub inputs
 
 =item $input = $form->find_input( $selector, $type, $index )
 
+=item @inputs = $form->find_input( $selector )
+
+=item @inputs = $form->find_input( $selector, $type )
+
 This method is used to locate specific inputs within the form.  All
 inputs that match the arguments given are returned.  In scalar context
 only the first is returned, or C<undef> if none match.
