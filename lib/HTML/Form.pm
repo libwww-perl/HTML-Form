@@ -504,7 +504,11 @@ input with the given name and/or type.
 sub find_input
 {
     my($self, $name, $type, $no) = @_;
+    die "Invalid index $no"
+        if defined $no && $no < 1;
     if (wantarray) {
+        warn "find_input called in list context with index specified\n"
+            if defined $no;
 	my @res;
 	my $c;
 	for (@{$self->{'inputs'}}) {
