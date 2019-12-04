@@ -1,6 +1,7 @@
 Change history for HTML-Form
 
 {{$NEXT}}
+    - Pod tweaks (GH#17) (Olaf Alders)
 
 6.05      2019-10-04 20:28:20Z
     - Update pod as requested in [RT#87689] (GH#16) (Lance Wicks and Julien
