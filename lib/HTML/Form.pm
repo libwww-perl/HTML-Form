@@ -1582,11 +1582,4 @@ __END__
 
 L<LWP>, L<LWP::UserAgent>, L<HTML::Parser>
 
-=head1 COPYRIGHT
-
-Copyright 1998-2008 Gisle Aas.
-
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
-
 =cut
