@@ -1,6 +1,7 @@
 Change history for HTML-Form
 
 {{$NEXT}}
+    - Restore =head1 NAME section to pod for HTML::Form
 
 6.06      2020-02-20 14:48:37Z
     - Change the behaviour of find_input in list context (GH#21) (E. Choroba)
