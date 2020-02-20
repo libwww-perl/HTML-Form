@@ -1,6 +1,7 @@
 Change history for HTML-Form
 
 {{$NEXT}}
+    - Change the behaviour of find_input in list context (GH#21) (E. Choroba)
     - Pod tweaks (GH#17) (Olaf Alders)
     - Add list context examples for find_input() (GH#20) (Olaf Alders)
     - Modernize some tests (GH#18) (Olaf Alders)
