@@ -1,3 +1,11 @@
+# NAME
+
+HTML::Form - Class that represents an HTML form element
+
+# VERSION
+
+version 6.07
+
 # SYNOPSIS
 
     use HTML::Form;
@@ -14,8 +22,8 @@ Objects of the `HTML::Form` class represents a single HTML
 `<form> ... </form>` instance.  A form consists of a
 sequence of inputs that usually have names, and which can take on
 various values.  The state of a form can be tweaked and it can then be
-asked to provide [HTTP::Request](https://metacpan.org/pod/HTTP%3A%3ARequest) objects that can be passed to the
-request() method of [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent).
+asked to provide [HTTP::Request](https://metacpan.org/pod/HTTP::Request) objects that can be passed to the
+request() method of [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent).
 
 The following methods are available:
 
@@ -55,7 +63,7 @@ The following methods are available:
             charset => $response->content_charset,
         );
 
-    In fact, the parse() method can parse from an [HTTP::Response](https://metacpan.org/pod/HTTP%3A%3AResponse) object
+    In fact, the parse() method can parse from an [HTTP::Response](https://metacpan.org/pod/HTTP::Response) object
     directly, so the example above can be more conveniently written as:
 
         my $ua = LWP::UserAgent->new;
@@ -63,7 +71,7 @@ The following methods are available:
         my @forms = HTML::Form->parse($response);
 
     Note that any object that implements a decoded\_content(), base() and
-    content\_charset() method with similar behaviour as [HTTP::Response](https://metacpan.org/pod/HTTP%3A%3AResponse) will do.
+    content\_charset() method with similar behaviour as [HTTP::Response](https://metacpan.org/pod/HTTP::Response) will do.
 
     Additional options might be passed in to control how the parse method
     behaves.  The following are all the options currently recognized:
@@ -108,7 +116,7 @@ The following methods are available:
 - $form->method( $new\_method )
 
     This method is gets/sets the _method_ name used for the
-    [HTTP::Request](https://metacpan.org/pod/HTTP%3A%3ARequest) generated.  It is a string like "GET" or "POST".
+    [HTTP::Request](https://metacpan.org/pod/HTTP::Request) generated.  It is a string like "GET" or "POST".
 
 - $action = $form->action
 - $form->action( $new\_action )
@@ -233,7 +241,7 @@ The following methods are available:
 
 - $request = $form->make\_request
 
-    Will return an [HTTP::Request](https://metacpan.org/pod/HTTP%3A%3ARequest) object that reflects the current setting
+    Will return an [HTTP::Request](https://metacpan.org/pod/HTTP::Request) object that reflects the current setting
     of the form.  You might want to use the click() method instead.
 
 - $request = $form->click
@@ -242,8 +250,8 @@ The following methods are available:
 - $request = $form->click( $selector, $x, $y )
 
     Will "click" on the first clickable input (which will be of type
-    `submit` or `image`).  The result of clicking is an [HTTP::Request](https://metacpan.org/pod/HTTP%3A%3ARequest)
-    object that can then be passed to [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent) if you want to
+    `submit` or `image`).  The result of clicking is an [HTTP::Request](https://metacpan.org/pod/HTTP::Request)
+    object that can then be passed to [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent) if you want to
     obtain the server response.
 
     If a $selector is specified, we will click on the first clickable input
@@ -403,7 +411,7 @@ The following methods are available for the _input_ objects:
 
     Some input types (currently "submit" buttons and "images") can be
     clicked to submit the form.  The click() method returns the
-    corresponding [HTTP::Request](https://metacpan.org/pod/HTTP%3A%3ARequest) object.
+    corresponding [HTTP::Request](https://metacpan.org/pod/HTTP::Request) object.
 
 If the input is of type `file`, then it has these additional methods:
 
@@ -438,11 +446,15 @@ If the input is of type `file`, then it has these additional methods:
 
 # SEE ALSO
 
-[LWP](https://metacpan.org/pod/LWP), [LWP::UserAgent](https://metacpan.org/pod/LWP%3A%3AUserAgent), [HTML::Parser](https://metacpan.org/pod/HTML%3A%3AParser)
+[LWP](https://metacpan.org/pod/LWP), [LWP::UserAgent](https://metacpan.org/pod/LWP::UserAgent), [HTML::Parser](https://metacpan.org/pod/HTML::Parser)
 
-# COPYRIGHT
+# AUTHOR
 
-Copyright 1998-2008 Gisle Aas.
+Gisle Aas <gisle@activestate.com>
 
-This library is free software; you can redistribute it and/or
-modify it under the same terms as Perl itself.
+# COPYRIGHT AND LICENSE
+
+This software is copyright (c) 1998 by Gisle Aas.
+
+This is free software; you can redistribute it and/or modify it under
+the same terms as the Perl 5 programming language system itself.
