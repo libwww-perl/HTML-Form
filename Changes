@@ -1,5 +1,7 @@
 Change history for HTML-Form
 
+{{$NEXT}}
+
 6.07      2020-02-21 03:50:52Z
     - Restore =head1 NAME section to pod for HTML::Form
 
