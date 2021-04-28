@@ -1,6 +1,7 @@
 Change history for HTML-Form
 
 {{$NEXT}}
+    - Remove Authority section from dist.ini (GH#27) (Olaf Alders)
 
 6.07      2020-02-21 03:50:52Z
     - Restore =head1 NAME section to pod for HTML::Form
