@@ -2,6 +2,7 @@ Change history for HTML-Form
 
 {{$NEXT}}
     - Remove Authority section from dist.ini (GH#27) (Olaf Alders)
+    - Allow buttons to not have a value (GH#8) (Felix Ostmann and Julien Fiegehenn)
 
 6.07      2020-02-21 03:50:52Z
     - Restore =head1 NAME section to pod for HTML::Form
