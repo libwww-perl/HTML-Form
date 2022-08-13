@@ -1539,7 +1539,8 @@ sub form_name_value {
     my $filename = $self->filename;
     my @headers = $self->headers;
     my $content = $self->content;
-    if (defined $content) {
+    my %headers = @headers;
+    if (defined $content || grep m/^Content$/, keys %headers) {
 	$filename = $file unless defined $filename;
 	$file = undef;
 	unshift(@headers, "Content" => $content);
