@@ -32,7 +32,6 @@ my %WriteMakefileArgs = (
     "HTTP::Response" => 0,
     "Test" => 0,
     "Test::More" => "0.96",
-    "lib" => 0,
     "warnings" => 0
   },
   "VERSION" => "6.09",
@@ -54,7 +53,6 @@ my %FallbackPrereqs = (
   "Test" => 0,
   "Test::More" => "0.96",
   "URI" => "1.10",
-  "lib" => 0,
   "strict" => 0,
   "warnings" => 0
 );

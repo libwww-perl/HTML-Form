@@ -74,7 +74,6 @@
             "HTTP::Response" : "0",
             "Test" : "0",
             "Test::More" : "0.96",
-            "lib" : "0",
             "warnings" : "0"
          }
       }
