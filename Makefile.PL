@@ -30,7 +30,6 @@ my %WriteMakefileArgs = (
     "ExtUtils::MakeMaker" => 0,
     "File::Spec" => 0,
     "HTTP::Response" => 0,
-    "Test" => 0,
     "Test::More" => "0.96",
     "warnings" => 0
   },
@@ -50,7 +49,6 @@ my %FallbackPrereqs = (
   "HTTP::Request" => 6,
   "HTTP::Request::Common" => "6.03",
   "HTTP::Response" => 0,
-  "Test" => 0,
   "Test::More" => "0.96",
   "URI" => "1.10",
   "strict" => 0,
