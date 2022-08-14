@@ -80,39 +80,39 @@
    "provides" : {
       "HTML::Form" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::FileInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::IgnoreInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::ImageInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::Input" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::KeygenInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::ListInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::SubmitInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       },
       "HTML::Form::TextInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.08"
+         "version" : "6.09"
       }
    },
    "release_status" : "stable",
@@ -129,7 +129,7 @@
       "x_IRC" : "irc://irc.perl.org/#lwp",
       "x_MailingList" : "mailto:libwww@perl.org"
    },
-   "version" : "6.08",
+   "version" : "6.09",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.028000"
@@ -282,7 +282,7 @@
             "class" : "Dist::Zilla::Plugin::MakeMaker",
             "config" : {
                "Dist::Zilla::Role::TestRunner" : {
-                  "default_jobs" : 1
+                  "default_jobs" : "4"
                }
             },
             "name" : "MakeMaker",
@@ -438,7 +438,7 @@
             "class" : "Dist::Zilla::Plugin::RunExtraTests",
             "config" : {
                "Dist::Zilla::Role::TestRunner" : {
-                  "default_jobs" : 1
+                  "default_jobs" : "4"
                }
             },
             "name" : "RunExtraTests",
@@ -668,7 +668,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v6.08",
+                  "tag" : "v6.09",
                   "tag_format" : "v%V",
                   "tag_message" : "v%V"
                },
@@ -849,6 +849,7 @@
       "Hans-H. Froehlich <hfroehlich@co-de-co.de>",
       "Ian Kilgore <iank@cpan.org>",
       "Jacob J <waif@chaos2.org>",
+      "James Raspass <jraspass@gmail.com>",
       "jefflee <shaohua@gmail.com>",
       "john9art <john9art@yahoo.com>",
       "Julien Fiegehenn <simbabque@cpan.org>",

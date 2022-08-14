@@ -4,7 +4,7 @@ HTML::Form - Class that represents an HTML form element
 
 # VERSION
 
-version 6.08
+version 6.09
 
 # SYNOPSIS
 
