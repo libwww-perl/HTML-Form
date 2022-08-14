@@ -24,7 +24,7 @@ my %WriteMakefileArgs = (
     "HTTP::Request::Common" => "6.03",
     "Test::More" => "0.96",
     "URI" => "1.10",
-    "strict" => 0,
+    "strict" => 0
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
@@ -33,7 +33,7 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.96",
     "warnings" => 0
   },
-  "VERSION" => "6.09",
+  "VERSION" => "6.10",
   "test" => {
     "TESTS" => "t/*.t"
   }

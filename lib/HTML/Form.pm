@@ -5,7 +5,7 @@ use URI;
 use Carp ();
 use Encode ();
 
-our $VERSION = '6.09';
+our $VERSION = '6.10';
 
 my %form_tags = map {$_ => 1} qw(input textarea button select option);
 
