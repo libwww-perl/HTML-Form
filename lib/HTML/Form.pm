@@ -397,8 +397,7 @@ charset as specified by the 'charset' parameter of the parse() method.
 
 BEGIN {
     # Set up some accessors
-    for (qw(method action enctype accept_charset)) {
-	my $m = $_;
+    for my $m (qw(method action enctype accept_charset)) {
 	no strict 'refs';
 	*{$m} = sub {
 	    my $self = shift;
