@@ -61,8 +61,7 @@
             "Test::More" : "0.96",
             "URI" : "1.10",
             "perl" : "5.008001",
-            "strict" : "0",
-            "vars" : "0"
+            "strict" : "0"
          }
       },
       "test" : {

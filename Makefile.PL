@@ -25,7 +25,6 @@ my %WriteMakefileArgs = (
     "Test::More" => "0.96",
     "URI" => "1.10",
     "strict" => 0,
-    "vars" => 0
   },
   "TEST_REQUIRES" => {
     "ExtUtils::MakeMaker" => 0,
@@ -57,7 +56,6 @@ my %FallbackPrereqs = (
   "URI" => "1.10",
   "lib" => 0,
   "strict" => 0,
-  "vars" => 0,
   "warnings" => 0
 );
 

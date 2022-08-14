@@ -158,9 +158,8 @@ ok(@warn, 0);
 # Try to parse form HTTP::Response directly
 {
     package MyResponse;
-    use vars qw(@ISA);
     require HTTP::Response;
-    @ISA = ('HTTP::Response');
+    our @ISA = ('HTTP::Response');
 
     sub base { "http://www.example.com" }
 }
