@@ -17,7 +17,6 @@ on 'test' => sub {
   requires "HTTP::Response" => "0";
   requires "Test" => "0";
   requires "Test::More" => "0.96";
-  requires "lib" => "0";
   requires "warnings" => "0";
 };
 
