@@ -10,7 +10,6 @@ requires "Test::More" => "0.96";
 requires "URI" => "1.10";
 requires "perl" => "5.008001";
 requires "strict" => "0";
-requires "vars" => "0";
 
 on 'test' => sub {
   requires "ExtUtils::MakeMaker" => "0";
