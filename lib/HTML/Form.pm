@@ -148,7 +148,7 @@ sub parse
 
     require HTML::TokeParser;
     my $p = HTML::TokeParser->new(ref($html) ? $html->decoded_content(ref => 1) : \$html);
-    die "Failed to create HTML::TokeParser object" unless $p;
+    Carp::croak "Failed to create HTML::TokeParser object" unless $p;
 
     my $base_uri = delete $opt{base};
     my $charset = delete $opt{charset};
@@ -506,7 +506,7 @@ input with the given name and/or type.
 sub find_input
 {
     my($self, $name, $type, $no) = @_;
-    die "Invalid index $no"
+    Carp::croak "Invalid index $no"
         if defined $no && $no < 1;
     if (wantarray) {
         warn "find_input called in list context with index specified\n"
@@ -622,7 +622,7 @@ sub param {
 
         if (@_) {
             # set
-            die "No '$name' parameter exists" unless @inputs;
+            Carp::croak "No '$name' parameter exists" unless @inputs;
 	    my @v = @_;
 	    @v = @{$v[0]} if @v == 1 && ref($v[0]);
             while (@v) {
@@ -639,7 +639,7 @@ sub param {
                     }
                     $err ||= $@;
                 }
-                die $err if $err;
+                Carp::croak $err if $err;
             }
 
 	    # the rest of the input should be cleared
@@ -1231,7 +1231,7 @@ sub add_to_form
 	return $self->SUPER::add_to_form($form);
     }
 
-    die "Assert" if @{$self->{menu}} != 1;
+    Carp::croak "Assert" if @{$self->{menu}} != 1;
     my $m = $self->{menu}[0];
     $m->{disabled}++ if delete $self->{option_disabled};
 
