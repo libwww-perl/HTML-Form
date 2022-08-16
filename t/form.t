@@ -3,7 +3,7 @@
 use strict;
 use warnings;
 
-use Test::More tests => 129;
+use Test::More;
 use HTML::Form;
 
 my @warn;
@@ -623,3 +623,52 @@ Content-Type: application/x-www-form-urlencoded
 
 submit=
 EOT
+
+# select with a name followed by select without a name GH#2
+$f = HTML::Form->parse(<<EOT, "http://localhost/");
+<form action="target.html" method="get">
+<select>
+<option selected>option in unnamed before</option>
+</select>
+<select name="foo">
+<option selected>option in named</option>
+</select>
+<select>
+<option selected>option in unnamed after 1</option>
+</select>
+<select name="">
+<option selected>option in empty string name</option>
+</select>
+EOT
+
+TODO: {
+  local $TODO = 'input with empty name should not be included';
+  is(
+      join( "|", $f->form ),
+      "foo|option in named",
+      "options in unnamed selects are ignored"
+  );
+}
+
+# explicitly selecting an input that has no name
+my @nameless_inputs = $f->find_input( \undef );
+is( scalar @nameless_inputs,
+    3, 'find_input with ref to undef finds three forms' );
+ok(
+    ( !grep { $_->{name} } @nameless_inputs ),
+    '... and none of them has a name'
+);
+
+ok(
+    !( scalar $f->find_input( \undef ) )->{name},
+    'find_input with ref to undef in scalar context'
+);
+TODO: {
+  local $TODO = 'input with empty name should not be included';
+  is($f->click->as_string, <<"EOT");
+GET http://localhost/target.html?foo=option+in+named
+
+EOT
+}
+
+done_testing;
