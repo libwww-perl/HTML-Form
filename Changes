@@ -3,6 +3,7 @@ Change history for HTML-Form
 {{$NEXT}}
     - Use "croak" instead of "die" to show errors from the perspective of the
       caller [RT#20499] (GH#29) (Julien Fiegehenn)
+    - Remove the executable bit from a couple of tests (GH#41) (James Raspass)
 
 6.09      2022-08-14 22:16:37Z
 
