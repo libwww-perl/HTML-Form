@@ -1,5 +1,7 @@
 Change history for HTML-Form
 
+{{$NEXT}}
+
 6.10      2022-08-22 13:20:12Z
     - Use "croak" instead of "die" to show errors from the perspective of the
       caller [RT#20499] (GH#29) (Julien Fiegehenn)
