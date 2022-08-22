@@ -4,7 +4,7 @@ HTML::Form - Class that represents an HTML form element
 
 # VERSION
 
-version 6.09
+version 6.10
 
 # SYNOPSIS
 
@@ -175,18 +175,29 @@ The following methods are available:
     inputs that match the arguments given are returned.  In scalar context
     only the first is returned, or `undef` if none match.
 
-    If $selector is not `undef`, then the input's name, id, class attribute must
-    match.  A selector prefixed with '#' must match the id attribute of the input.
-    A selector prefixed with '.' matches the class attribute.  A selector prefixed
-    with '^' or with no prefix matches the name attribute.
+    If `$selector` is not `undef`, then the input's _name_, _id_ or _class_
+    attribute must match.
+    A selector prefixed with '#' must match the _id_ attribute of the input.
+    A selector prefixed with '.' matches the _class_ attribute. A selector prefixed
+    with '^' or with no prefix matches the _name_ attribute.
 
-    If $type is not `undef`, then the input must have the specified type.
+        my @by_id         = $form->find_input( '#some-id' );
+        my @by_class      = $form->find_input( '.some-class' );
+        my @by_name       = $form->find_input( '^some-name' );
+        my @also_by_name  = $form->find_input( 'some-name' );
+
+    If you want to find an input that has no _name_ at all, pass in a reference
+    to `undef`.
+
+        my @nameless_inputs = $form->find_input( \undef );
+
+    If `$type` is not `undef`, then the input must have the specified type.
     The following type names are used: "text", "password", "hidden",
     "textarea", "file", "image", "submit", "radio", "checkbox" and "option".
 
-    The $index is the sequence number of the input matched where 1 is the
-    first.  If combined with $name and/or $type, then it selects the _n_th
-    input with the given name and/or type.
+    The `$index` is the sequence number of the input matched where 1 is the
+    first.  If combined with `$selector` and/or `$type`, then it selects the
+    _n_th input with the given _name_ and/or type.
 
 - $value = $form->value( $selector )
 - $form->value( $selector, $new\_value )

@@ -80,39 +80,39 @@
    "provides" : {
       "HTML::Form" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::FileInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::IgnoreInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::ImageInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::Input" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::KeygenInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::ListInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::SubmitInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       },
       "HTML::Form::TextInput" : {
          "file" : "lib/HTML/Form.pm",
-         "version" : "6.09"
+         "version" : "6.10"
       }
    },
    "release_status" : "stable",
@@ -129,7 +129,7 @@
       "x_IRC" : "irc://irc.perl.org/#lwp",
       "x_MailingList" : "mailto:libwww@perl.org"
    },
-   "version" : "6.09",
+   "version" : "6.10",
    "x_Dist_Zilla" : {
       "perl" : {
          "version" : "5.028000"
@@ -339,7 +339,7 @@
                }
             },
             "name" : "Test::Portability",
-            "version" : "2.001000"
+            "version" : "2.001001"
          },
          {
             "class" : "Dist::Zilla::Plugin::Test::EOL",
@@ -668,7 +668,7 @@
                   "branch" : null,
                   "changelog" : "Changes",
                   "signed" : 0,
-                  "tag" : "v6.09",
+                  "tag" : "v6.10",
                   "tag_format" : "v%V",
                   "tag_message" : "v%V"
                },
