@@ -5,6 +5,14 @@ use URI;
 use Carp   ();
 use Encode ();
 
+use HTML::Form::TextInput   ();
+use HTML::Form::IgnoreInput ();
+use HTML::Form::ListInput   ();
+use HTML::Form::SubmitInput ();
+use HTML::Form::ImageInput  ();
+use HTML::Form::FileInput   ();
+use HTML::Form::KeygenInput ();
+
 our $VERSION = '6.11';
 
 my %form_tags = map { $_ => 1 } qw(input textarea button select option);
@@ -40,107 +48,6 @@ my %type2class = (
 );
 
 # ABSTRACT: Class that represents an HTML form element
-
-=head1 SYNOPSIS
-
- use HTML::Form;
- $form = HTML::Form->parse($html, $base_uri);
- $form->value(query => "Perl");
-
- use LWP::UserAgent;
- $ua = LWP::UserAgent->new;
- $response = $ua->request($form->click);
-
-=head1 DESCRIPTION
-
-Objects of the C<HTML::Form> class represents a single HTML
-C<E<lt>formE<gt> ... E<lt>/formE<gt>> instance.  A form consists of a
-sequence of inputs that usually have names, and which can take on
-various values.  The state of a form can be tweaked and it can then be
-asked to provide L<HTTP::Request> objects that can be passed to the
-request() method of L<LWP::UserAgent>.
-
-The following methods are available:
-
-=over 4
-
-=item @forms = HTML::Form->parse( $html_document, $base_uri )
-
-=item @forms = HTML::Form->parse( $html_document, base => $base_uri, %opt )
-
-=item @forms = HTML::Form->parse( $response, %opt )
-
-The parse() class method will parse an HTML document and build up
-C<HTML::Form> objects for each <form> element found.  If called in scalar
-context only returns the first <form>.  Returns an empty list if there
-are no forms to be found.
-
-The required arguments is the HTML document to parse ($html_document) and the
-URI used to retrieve the document ($base_uri).  The base URI is needed to resolve
-relative action URIs.  The provided HTML document should be a Unicode string
-(or US-ASCII).
-
-By default HTML::Form assumes that the original document was UTF-8 encoded and
-thus encode forms that don't specify an explicit I<accept-charset> as UTF-8.
-The charset assumed can be overridden by providing the C<charset> option to
-parse().  It's a good idea to be explicit about this parameter as well, thus
-the recommended simplest invocation becomes:
-
-    my @forms = HTML::Form->parse(
-        Encode::decode($encoding, $html_document_bytes),
-        base => $base_uri,
-	charset => $encoding,
-    );
-
-If the document was retrieved with LWP then the response object provide methods
-to obtain a proper value for C<base> and C<charset>:
-
-    my $ua = LWP::UserAgent->new;
-    my $response = $ua->get("http://www.example.com/form.html");
-    my @forms = HTML::Form->parse($response->decoded_content,
-	base => $response->base,
-	charset => $response->content_charset,
-    );
-
-In fact, the parse() method can parse from an L<HTTP::Response> object
-directly, so the example above can be more conveniently written as:
-
-    my $ua = LWP::UserAgent->new;
-    my $response = $ua->get("http://www.example.com/form.html");
-    my @forms = HTML::Form->parse($response);
-
-Note that any object that implements a decoded_content(), base() and
-content_charset() method with similar behaviour as L<HTTP::Response> will do.
-
-Additional options might be passed in to control how the parse method
-behaves.  The following are all the options currently recognized:
-
-=over
-
-=item C<< base => $uri >>
-
-This is the URI used to retrieve the original document.  This option is not optional ;-)
-
-=item C<< charset => $str >>
-
-Specify what charset the original document was encoded in.  This is used as
-the default for accept_charset.  If not provided this defaults to "UTF-8".
-
-=item C<< verbose => $bool >>
-
-Warn (print messages to STDERR) about any bad HTML form constructs found.
-You can trap these with $SIG{__WARN__}.  The default is not to issue warnings.
-
-=item C<< strict => $bool >>
-
-Initialize any form objects with the given strict attribute.
-If the strict is turned on the methods that change values of the form will croak if you try
-to set illegal values or modify readonly fields.
-The default is not to be strict.
-
-=back
-
-=cut
 
 sub parse {
     my $class = shift;
@@ -334,23 +241,6 @@ sub new {
     $self;
 }
 
-=item $form->push_input( $type, \%attr, $verbose )
-
-This method adds additional inputs to the form.
-The first argument is the type of input (e.g. hidden, option, etc.).
-The second argument is a reference to a hash of the input attributes.
-The third argument is optional, and will issue warnings about unknown input types.
-
-Example:
-
-    push_input( 'hidden', {
-        name  => 'NewFormElement',
-        id    => 'NewFormElementId',
-        value => 'some value',
-    });
-
-=cut
-
 sub push_input {
     my ( $self, $type, $attr, $verbose ) = @_;
     $type = lc $type;
@@ -374,38 +264,6 @@ sub push_input {
     $input->add_to_form($self);
 }
 
-=item $method = $form->method
-
-=item $form->method( $new_method )
-
-This method is gets/sets the I<method> name used for the
-L<HTTP::Request> generated.  It is a string like "GET" or "POST".
-
-=item $action = $form->action
-
-=item $form->action( $new_action )
-
-This method gets/sets the URI which we want to apply the request
-I<method> to.
-
-=item $enctype = $form->enctype
-
-=item $form->enctype( $new_enctype )
-
-This method gets/sets the encoding type for the form data.  It is a
-string like "application/x-www-form-urlencoded" or "multipart/form-data".
-
-=item $accept = $form->accept_charset
-
-=item $form->accept_charset( $new_accept )
-
-This method gets/sets the list of charset encodings that the server processing
-the form accepts. Current implementation supports only one-element lists.
-Default value is "UNKNOWN" which we interpret as a request to use document
-charset as specified by the 'charset' parameter of the parse() method.
-
-=cut
-
 BEGIN {
     # Set up some accessors
     for my $m (qw(method action enctype accept_charset)) {
@@ -420,22 +278,6 @@ BEGIN {
     *uri = \&action;    # alias
 }
 
-=item $value = $form->attr( $name )
-
-=item $form->attr( $name, $new_value )
-
-This method give access to the original HTML attributes of the <form> tag.
-The $name should always be passed in lower case.
-
-Example:
-
-   @f = HTML::Form->parse( $html, $foo );
-   @f = grep $_->attr("id") eq "foo", @f;
-   die "No form named 'foo' found" unless @f;
-   $foo = shift @f;
-
-=cut
-
 sub attr {
     my $self = shift;
     my $name = shift;
@@ -445,16 +287,6 @@ sub attr {
     $self->{attr}{$name} = shift if @_;
     return $old;
 }
-
-=item $bool = $form->strict
-
-=item $form->strict( $bool )
-
-Gets/sets the strict attribute of a form.  If the strict is turned on
-the methods that change values of the form will croak if you try to
-set illegal values or modify readonly fields.  The default is not to be strict.
-
-=cut
 
 sub strict {
     my $self = shift;
@@ -468,59 +300,10 @@ sub strict {
     return $old;
 }
 
-=item @inputs = $form->inputs
-
-This method returns the list of inputs in the form.  If called in
-scalar context it returns the number of inputs contained in the form.
-See L</INPUTS> for what methods are available for the input objects
-returned.
-
-=cut
-
 sub inputs {
     my $self = shift;
     @{ $self->{'inputs'} };
 }
-
-=item $input = $form->find_input( $selector )
-
-=item $input = $form->find_input( $selector, $type )
-
-=item $input = $form->find_input( $selector, $type, $index )
-
-=item @inputs = $form->find_input( $selector )
-
-=item @inputs = $form->find_input( $selector, $type )
-
-This method is used to locate specific inputs within the form.  All
-inputs that match the arguments given are returned.  In scalar context
-only the first is returned, or C<undef> if none match.
-
-If C<$selector> is not C<undef>, then the input's I<name>, I<id> or I<class>
-attribute must match.
-A selector prefixed with '#' must match the I<id> attribute of the input.
-A selector prefixed with '.' matches the I<class> attribute. A selector prefixed
-with '^' or with no prefix matches the I<name> attribute.
-
-    my @by_id         = $form->find_input( '#some-id' );
-    my @by_class      = $form->find_input( '.some-class' );
-    my @by_name       = $form->find_input( '^some-name' );
-    my @also_by_name  = $form->find_input( 'some-name' );
-
-If you want to find an input that has no I<name> at all, pass in a reference
-to C<undef>.
-
-    my @nameless_inputs = $form->find_input( \undef );
-
-If C<$type> is not C<undef>, then the input must have the specified type.
-The following type names are used: "text", "password", "hidden",
-"textarea", "file", "image", "submit", "radio", "checkbox" and "option".
-
-The C<$index> is the sequence number of the input matched where 1 is the
-first.  If combined with C<$selector> and/or C<$type>, then it selects the
-I<n>th input with the given I<name> and/or type.
-
-=cut
 
 sub find_input {
     my ( $self, $selector, $type, $no ) = @_;
@@ -586,26 +369,6 @@ sub fixup {
     }
 }
 
-=item $value = $form->value( $selector )
-
-=item $form->value( $selector, $new_value )
-
-The value() method can be used to get/set the value of some input.  If
-strict is enabled and no input has the indicated name, then this method will croak.
-
-If multiple inputs have the same name, only the first one will be
-affected.
-
-The call:
-
-    $form->value('foo')
-
-is basically a short-hand for:
-
-    $form->find_input('foo')->value;
-
-=cut
-
 sub value {
     my $self  = shift;
     my $key   = shift;
@@ -618,37 +381,6 @@ sub value {
     local $Carp::CarpLevel = 1;
     $input->value(@_);
 }
-
-=item @names = $form->param
-
-=item @values = $form->param( $name )
-
-=item $form->param( $name, $value, ... )
-
-=item $form->param( $name, \@values )
-
-Alternative interface to examining and setting the values of the form.
-
-If called without arguments then it returns the names of all the
-inputs in the form.  The names will not repeat even if multiple inputs
-have the same name.  In scalar context the number of different names
-is returned.
-
-If called with a single argument then it returns the value or values
-of inputs with the given name.  If called in scalar context only the
-first value is returned.  If no input exists with the given name, then
-C<undef> is returned.
-
-If called with 2 or more arguments then it will set values of the
-named inputs.  This form will croak if no inputs have the given name
-or if any of the values provided does not fit.  Values can also be
-provided as a reference to an array.  This form will allow unsetting
-all values with the given name as well.
-
-This interface resembles that of the param() function of the CGI
-module.
-
-=cut
 
 sub param {
     my $self = shift;
@@ -711,16 +443,6 @@ sub param {
     }
 }
 
-=item $form->try_others( \&callback )
-
-This method will iterate over all permutations of unvisited enumerated
-values (<select>, <radio>, <checkbox>) and invoke the callback for
-each.  The callback is passed the $form as argument.  The return value
-from the callback is ignored and the try_others() method itself does
-not return anything.
-
-=cut
-
 sub try_others {
     my ( $self, $cb ) = @_;
     my @try;
@@ -741,13 +463,6 @@ sub _try {
         $self->_try( $cb, $try, $i + 1 ) if $i + 1 < @$try;
     }
 }
-
-=item $request = $form->make_request
-
-Will return an L<HTTP::Request> object that reflects the current setting
-of the form.  You might want to use the click() method instead.
-
-=cut
 
 sub make_request {
     my $self    = shift;
@@ -782,6 +497,326 @@ sub make_request {
     }
 }
 
+sub click {
+    my $self = shift;
+    my $name;
+    $name = shift if ( @_ % 2 ) == 1;    # odd number of arguments
+
+    # try to find first submit button to activate
+    for ( @{ $self->{'inputs'} } ) {
+        next unless $_->can("click");
+        next if $name && !$_->selected($name);
+        next if $_->disabled;
+        return $_->click( $self, @_ );
+    }
+    Carp::croak("No clickable input with name $name") if $name;
+    $self->make_request;
+}
+
+sub form {
+    my $self = shift;
+    map { $_->form_name_value($self) } @{ $self->{'inputs'} };
+}
+
+sub dump {
+    my $self    = shift;
+    my $method  = $self->{'method'};
+    my $uri     = $self->{'action'};
+    my $enctype = $self->{'enctype'};
+    my $dump    = "$method $uri";
+    $dump .= " ($enctype)"
+        if $enctype ne "application/x-www-form-urlencoded";
+    $dump .= " [$self->{attr}{name}]"
+        if exists $self->{attr}{name};
+    $dump .= "\n";
+
+    for ( $self->inputs ) {
+        $dump .= "  " . $_->dump . "\n";
+    }
+    print STDERR $dump unless defined wantarray;
+    $dump;
+}
+
+1;
+
+__END__
+
+=head1 NAME
+
+HTML::Form - Class that represents an HTML form element
+
+=head1 SYNOPSIS
+
+ use HTML::Form;
+ $form = HTML::Form->parse($html, $base_uri);
+ $form->value(query => "Perl");
+
+ use LWP::UserAgent;
+ $ua = LWP::UserAgent->new;
+ $response = $ua->request($form->click);
+
+=head1 DESCRIPTION
+
+Objects of the C<HTML::Form> class represents a single HTML
+C<E<lt>formE<gt> ... E<lt>/formE<gt>> instance.  A form consists of a
+sequence of inputs that usually have names, and which can take on
+various values.  The state of a form can be tweaked and it can then be
+asked to provide L<HTTP::Request> objects that can be passed to the
+request() method of L<LWP::UserAgent>.
+
+The following methods are available:
+
+=over 4
+
+=item @forms = HTML::Form->parse( $html_document, $base_uri )
+
+=item @forms = HTML::Form->parse( $html_document, base => $base_uri, %opt )
+
+=item @forms = HTML::Form->parse( $response, %opt )
+
+The parse() class method will parse an HTML document and build up
+C<HTML::Form> objects for each <form> element found.  If called in scalar
+context only returns the first <form>.  Returns an empty list if there
+are no forms to be found.
+
+The required arguments is the HTML document to parse ($html_document) and the
+URI used to retrieve the document ($base_uri).  The base URI is needed to resolve
+relative action URIs.  The provided HTML document should be a Unicode string
+(or US-ASCII).
+
+By default HTML::Form assumes that the original document was UTF-8 encoded and
+thus encode forms that don't specify an explicit I<accept-charset> as UTF-8.
+The charset assumed can be overridden by providing the C<charset> option to
+parse().  It's a good idea to be explicit about this parameter as well, thus
+the recommended simplest invocation becomes:
+
+    my @forms = HTML::Form->parse(
+        Encode::decode($encoding, $html_document_bytes),
+        base => $base_uri,
+	charset => $encoding,
+    );
+
+If the document was retrieved with LWP then the response object provide methods
+to obtain a proper value for C<base> and C<charset>:
+
+    my $ua = LWP::UserAgent->new;
+    my $response = $ua->get("http://www.example.com/form.html");
+    my @forms = HTML::Form->parse($response->decoded_content,
+	base => $response->base,
+	charset => $response->content_charset,
+    );
+
+In fact, the parse() method can parse from an L<HTTP::Response> object
+directly, so the example above can be more conveniently written as:
+
+    my $ua = LWP::UserAgent->new;
+    my $response = $ua->get("http://www.example.com/form.html");
+    my @forms = HTML::Form->parse($response);
+
+Note that any object that implements a decoded_content(), base() and
+content_charset() method with similar behaviour as L<HTTP::Response> will do.
+
+Additional options might be passed in to control how the parse method
+behaves.  The following are all the options currently recognized:
+
+=over
+
+=item C<< base => $uri >>
+
+This is the URI used to retrieve the original document.  This option is not optional ;-)
+
+=item C<< charset => $str >>
+
+Specify what charset the original document was encoded in.  This is used as
+the default for accept_charset.  If not provided this defaults to "UTF-8".
+
+=item C<< verbose => $bool >>
+
+Warn (print messages to STDERR) about any bad HTML form constructs found.
+You can trap these with $SIG{__WARN__}.  The default is not to issue warnings.
+
+=item C<< strict => $bool >>
+
+Initialize any form objects with the given strict attribute.
+If the strict is turned on the methods that change values of the form will croak if you try
+to set illegal values or modify readonly fields.
+The default is not to be strict.
+
+=back
+
+=item $form->push_input( $type, \%attr, $verbose )
+
+This method adds additional inputs to the form.
+The first argument is the type of input (e.g. hidden, option, etc.).
+The second argument is a reference to a hash of the input attributes.
+The third argument is optional, and will issue warnings about unknown input types.
+
+Example:
+
+    push_input( 'hidden', {
+        name  => 'NewFormElement',
+        id    => 'NewFormElementId',
+        value => 'some value',
+    });
+
+=item $method = $form->method
+
+=item $form->method( $new_method )
+
+This method is gets/sets the I<method> name used for the
+L<HTTP::Request> generated.  It is a string like "GET" or "POST".
+
+=item $action = $form->action
+
+=item $form->action( $new_action )
+
+This method gets/sets the URI which we want to apply the request
+I<method> to.
+
+=item $enctype = $form->enctype
+
+=item $form->enctype( $new_enctype )
+
+This method gets/sets the encoding type for the form data.  It is a
+string like "application/x-www-form-urlencoded" or "multipart/form-data".
+
+=item $accept = $form->accept_charset
+
+=item $form->accept_charset( $new_accept )
+
+This method gets/sets the list of charset encodings that the server processing
+the form accepts. Current implementation supports only one-element lists.
+Default value is "UNKNOWN" which we interpret as a request to use document
+charset as specified by the 'charset' parameter of the parse() method.
+
+=item $value = $form->attr( $name )
+
+=item $form->attr( $name, $new_value )
+
+This method give access to the original HTML attributes of the <form> tag.
+The $name should always be passed in lower case.
+
+Example:
+
+   @f = HTML::Form->parse( $html, $foo );
+   @f = grep $_->attr("id") eq "foo", @f;
+   die "No form named 'foo' found" unless @f;
+   $foo = shift @f;
+
+=item $bool = $form->strict
+
+=item $form->strict( $bool )
+
+Gets/sets the strict attribute of a form.  If the strict is turned on
+the methods that change values of the form will croak if you try to
+set illegal values or modify readonly fields.  The default is not to be strict.
+
+=item @inputs = $form->inputs
+
+This method returns the list of inputs in the form.  If called in
+scalar context it returns the number of inputs contained in the form.
+See L</INPUTS> for what methods are available for the input objects
+returned.
+
+=item $input = $form->find_input( $selector )
+
+=item $input = $form->find_input( $selector, $type )
+
+=item $input = $form->find_input( $selector, $type, $index )
+
+=item @inputs = $form->find_input( $selector )
+
+=item @inputs = $form->find_input( $selector, $type )
+
+This method is used to locate specific inputs within the form.  All
+inputs that match the arguments given are returned.  In scalar context
+only the first is returned, or C<undef> if none match.
+
+If C<$selector> is not C<undef>, then the input's I<name>, I<id> or I<class>
+attribute must match.
+A selector prefixed with '#' must match the I<id> attribute of the input.
+A selector prefixed with '.' matches the I<class> attribute. A selector prefixed
+with '^' or with no prefix matches the I<name> attribute.
+
+    my @by_id         = $form->find_input( '#some-id' );
+    my @by_class      = $form->find_input( '.some-class' );
+    my @by_name       = $form->find_input( '^some-name' );
+    my @also_by_name  = $form->find_input( 'some-name' );
+
+If you want to find an input that has no I<name> at all, pass in a reference
+to C<undef>.
+
+    my @nameless_inputs = $form->find_input( \undef );
+
+If C<$type> is not C<undef>, then the input must have the specified type.
+The following type names are used: "text", "password", "hidden",
+"textarea", "file", "image", "submit", "radio", "checkbox" and "option".
+
+The C<$index> is the sequence number of the input matched where 1 is the
+first.  If combined with C<$selector> and/or C<$type>, then it selects the
+I<n>th input with the given I<name> and/or type.
+
+=item $value = $form->value( $selector )
+
+=item $form->value( $selector, $new_value )
+
+The value() method can be used to get/set the value of some input.  If
+strict is enabled and no input has the indicated name, then this method will croak.
+
+If multiple inputs have the same name, only the first one will be
+affected.
+
+The call:
+
+    $form->value('foo')
+
+is basically a short-hand for:
+
+    $form->find_input('foo')->value;
+
+=item @names = $form->param
+
+=item @values = $form->param( $name )
+
+=item $form->param( $name, $value, ... )
+
+=item $form->param( $name, \@values )
+
+Alternative interface to examining and setting the values of the form.
+
+If called without arguments then it returns the names of all the
+inputs in the form.  The names will not repeat even if multiple inputs
+have the same name.  In scalar context the number of different names
+is returned.
+
+If called with a single argument then it returns the value or values
+of inputs with the given name.  If called in scalar context only the
+first value is returned.  If no input exists with the given name, then
+C<undef> is returned.
+
+If called with 2 or more arguments then it will set values of the
+named inputs.  This form will croak if no inputs have the given name
+or if any of the values provided does not fit.  Values can also be
+provided as a reference to an array.  This form will allow unsetting
+all values with the given name as well.
+
+This interface resembles that of the param() function of the CGI
+module.
+
+=item $form->try_others( \&callback )
+
+This method will iterate over all permutations of unvisited enumerated
+values (<select>, <radio>, <checkbox>) and invoke the callback for
+each.  The callback is passed the $form as argument.  The return value
+from the callback is ignored and the try_others() method itself does
+not return anything.
+
+=item $request = $form->make_request
+
+Will return an L<HTTP::Request> object that reflects the current setting
+of the form.  You might want to use the click() method instead.
+
+
 =item $request = $form->click
 
 =item $request = $form->click( $selector )
@@ -815,24 +850,6 @@ difference if you clicked on an image.  The default coordinate is
 coded CGI scripts are known to not recognize this.  Therefore (1,1) was
 selected as a safer default.
 
-=cut
-
-sub click {
-    my $self = shift;
-    my $name;
-    $name = shift if ( @_ % 2 ) == 1;    # odd number of arguments
-
-    # try to find first submit button to activate
-    for ( @{ $self->{'inputs'} } ) {
-        next unless $_->can("click");
-        next if $name && !$_->selected($name);
-        next if $_->disabled;
-        return $_->click( $self, @_ );
-    }
-    Carp::croak("No clickable input with name $name") if $name;
-    $self->make_request;
-}
-
 =item @kw = $form->form
 
 Returns the current setting as a sequence of key/value pairs.  Note
@@ -842,48 +859,17 @@ lost if the return values are assigned to a hash.
 In scalar context this method returns the number of key/value pairs
 generated.
 
-=cut
-
-sub form {
-    my $self = shift;
-    map { $_->form_name_value($self) } @{ $self->{'inputs'} };
-}
-
 =item $form->dump
 
 Returns a textual representation of current state of the form.  Mainly
 useful for debugging.  If called in void context, then the dump is
 printed on STDERR.
 
-=cut
-
-sub dump {
-    my $self    = shift;
-    my $method  = $self->{'method'};
-    my $uri     = $self->{'action'};
-    my $enctype = $self->{'enctype'};
-    my $dump    = "$method $uri";
-    $dump .= " ($enctype)"
-        if $enctype ne "application/x-www-form-urlencoded";
-    $dump .= " [$self->{attr}{name}]"
-        if exists $self->{attr}{name};
-    $dump .= "\n";
-
-    for ( $self->inputs ) {
-        $dump .= "  " . $_->dump . "\n";
-    }
-    print STDERR $dump unless defined wantarray;
-    $dump;
-}
-
-#---------------------------------------------------
-package HTML::Form::Input;
-
 =back
 
 =head1 INPUTS
 
-An C<HTML::Form> objects contains a sequence of I<inputs>.  References to
+An C<HTML::Form> object contains a sequence of I<inputs>.  References to
 the inputs can be obtained with the $form->inputs or $form->find_input
 methods.
 
@@ -909,42 +895,11 @@ The following methods are available for the I<input> objects:
 
 =over 4
 
-=cut
-
-sub new {
-    my $class = shift;
-    my $self  = bless {@_}, $class;
-    $self;
-}
-
-sub add_to_form {
-    my ( $self, $form ) = @_;
-    push( @{ $form->{'inputs'} }, $self );
-    $self;
-}
-
-sub strict {
-    my $self = shift;
-    my $old  = $self->{strict};
-    if (@_) {
-        $self->{strict} = shift;
-    }
-    $old;
-}
-
-sub fixup { }
-
 =item $input->type
 
 Returns the type of this input.  The type is one of the following
 strings: "text", "password", "hidden", "textarea", "file", "image", "submit",
 "radio", "checkbox" or "option".
-
-=cut
-
-sub type {
-    shift->{type};
-}
 
 =item $name = $input->name
 
@@ -982,75 +937,15 @@ warning will be generated if running under C<perl -w>.
 =item $input->autocomplete( $new_autocomplete )
 
 This method can be used to get/set the current value (if any) of C<autcomplete> for the input.
-=cut
-
-sub name {
-    my $self = shift;
-    my $old  = $self->{name};
-    $self->{name} = shift if @_;
-    $old;
-}
-
-sub id {
-    my $self = shift;
-    my $old  = $self->{id};
-    $self->{id} = shift if @_;
-    $old;
-}
-
-sub class {
-    my $self = shift;
-    my $old  = $self->{class};
-    $self->{class} = shift if @_;
-    $old;
-}
-
-sub selected {
-    my ( $self, $sel ) = @_;
-    return undef unless defined $sel;
-    my $attr
-        = $sel =~ s/^\^// ? "name"
-        : $sel =~ s/^#//  ? "id"
-        : $sel =~ s/^\.// ? "class"
-        :                   "name";
-    return 0 unless defined $self->{$attr};
-    return $self->{$attr} eq $sel;
-}
-
-sub value {
-    my $self = shift;
-    my $old  = $self->{value};
-    $self->{value} = shift if @_;
-    $old;
-}
-
-sub autocomplete {
-    my $self = shift;
-    my $old  = $self->{autocomplete};
-    $self->{autocomplete} = shift if @_;
-    $old;
-}
 
 =item $input->possible_values
 
 Returns a list of all values that an input can take.  For inputs that
 do not have discrete values, this returns an empty list.
 
-=cut
-
-sub possible_values {
-    return;
-}
-
 =item $input->other_possible_values
 
 Returns a list of all values not tried yet.
-
-=cut
-
-sub other_possible_values {
-    return;
-}
 
 =item $input->value_names
 
@@ -1061,12 +956,6 @@ match the number of values reported by $input->possible_values.
 When setting values using the value() method it is also possible to
 use the value names in place of the value itself.
 
-=cut
-
-sub value_names {
-    return;
-}
-
 =item $bool = $input->readonly
 
 =item $input->readonly( $bool )
@@ -1076,15 +965,6 @@ You are allowed to modify the value of readonly inputs, but setting
 the value will generate some noise when warnings are enabled.  Hidden
 fields always start out readonly.
 
-=cut
-
-sub readonly {
-    my $self = shift;
-    my $old  = $self->{readonly};
-    $self->{readonly} = shift if @_;
-    $old;
-}
-
 =item $bool = $input->disabled
 
 =item $input->disabled( $bool )
@@ -1093,290 +973,10 @@ This method is used to get/set the value of the disabled attribute.
 Disabled inputs do not contribute any key/value pairs for the form
 value.
 
-=cut
-
-sub disabled {
-    my $self = shift;
-    my $old  = $self->{disabled};
-    $self->{disabled} = shift if @_;
-    $old;
-}
-
 =item $input->form_name_value
 
 Returns a (possible empty) list of key/value pairs that should be
 incorporated in the form value from this input.
-
-=cut
-
-sub form_name_value {
-    my $self = shift;
-    my $name = $self->{'name'};
-    return unless defined $name;
-    return if $self->disabled;
-    my $value = $self->value;
-    return unless defined $value;
-    return ( $name => $value );
-}
-
-sub dump {
-    my $self = shift;
-    my $name = $self->name;
-    $name = "<NONAME>" unless defined $name;
-    my $value = $self->value;
-    $value = "<UNDEF>" unless defined $value;
-    my $dump = "$name=$value";
-
-    my $type = $self->type;
-
-    $type .= " disabled" if $self->disabled;
-    $type .= " readonly" if $self->readonly;
-    return sprintf "%-30s %s", $dump, "($type)" unless $self->{menu};
-
-    my @menu;
-    my $i = 0;
-    for ( @{ $self->{menu} } ) {
-        my $opt = $_->{value};
-        $opt = "<UNDEF>" unless defined $opt;
-        $opt .= "/$_->{name}"
-            if defined $_->{name} && length $_->{name} && $_->{name} ne $opt;
-        substr( $opt, 0, 0 ) = "-" if $_->{disabled};
-        if ( exists $self->{current} && $self->{current} == $i ) {
-            substr( $opt, 0, 0 ) = "!" unless $_->{seen};
-            substr( $opt, 0, 0 ) = "*";
-        }
-        else {
-            substr( $opt, 0, 0 ) = ":" if $_->{seen};
-        }
-        push( @menu, $opt );
-        $i++;
-    }
-
-    return sprintf "%-30s %-10s %s", $dump, "($type)",
-        "[" . join( "|", @menu ) . "]";
-}
-
-#---------------------------------------------------
-package HTML::Form::TextInput;
-@HTML::Form::TextInput::ISA = qw(HTML::Form::Input);
-
-#input/text
-#input/password
-#input/hidden
-#textarea
-
-sub value {
-    my $self = shift;
-    my $old  = $self->{value};
-    $old = "" unless defined $old;
-    if (@_) {
-        Carp::croak("Input '$self->{name}' is readonly")
-            if $self->{strict} && $self->{readonly};
-        my $new = shift;
-        my $n   = exists $self->{maxlength} ? $self->{maxlength} : undef;
-        Carp::croak("Input '$self->{name}' has maxlength '$n'")
-            if $self->{strict}
-            && defined($n)
-            && defined($new)
-            && length($new) > $n;
-        $self->{value} = $new;
-    }
-    $old;
-}
-
-#---------------------------------------------------
-package HTML::Form::IgnoreInput;
-@HTML::Form::IgnoreInput::ISA = qw(HTML::Form::Input);
-
-#input/button
-#input/reset
-
-sub value { return }
-
-#---------------------------------------------------
-package HTML::Form::ListInput;
-@HTML::Form::ListInput::ISA = qw(HTML::Form::Input);
-
-#select/option   (val1, val2, ....)
-#input/radio     (undef, val1, val2,...)
-#input/checkbox  (undef, value)
-#select-multiple/option (undef, value)
-
-sub new {
-    my $class = shift;
-    my $self  = $class->SUPER::new(@_);
-
-    my $value      = delete $self->{value};
-    my $value_name = delete $self->{value_name};
-    my $type       = $self->{type};
-
-    if ( $type eq "checkbox" ) {
-        $value = "on" unless defined $value;
-        $self->{menu} = [
-            { value => undef,  name => "off", },
-            { value => $value, name => $value_name, },
-        ];
-        $self->{current} = ( delete $self->{checked} ) ? 1 : 0;
-
-    }
-    else {
-        $self->{option_disabled}++
-            if $type eq "radio" && delete $self->{disabled};
-        $self->{menu} = [
-            { value => $value, name => $value_name },
-        ];
-        my $checked = $self->{checked} || $self->{option_selected};
-        delete $self->{checked};
-        delete $self->{option_selected};
-        if ( exists $self->{multiple} ) {
-            unshift( @{ $self->{menu} }, { value => undef, name => "off" } );
-            $self->{current} = $checked ? 1 : 0;
-        }
-        else {
-            $self->{current} = 0 if $checked;
-        }
-    }
-    $self;
-}
-
-sub add_to_form {
-    my ( $self, $form ) = @_;
-    my $type = $self->type;
-
-    return $self->SUPER::add_to_form($form)
-        if $type eq "checkbox";
-
-    if ( $type eq "option" && exists $self->{multiple} ) {
-        $self->{disabled} ||= delete $self->{option_disabled};
-        return $self->SUPER::add_to_form($form);
-    }
-
-    Carp::croak "Assert" if @{ $self->{menu} } != 1;
-    my $m = $self->{menu}[0];
-    $m->{disabled}++ if delete $self->{option_disabled};
-
-    # if there was no name we have to search for an input that explicitly has
-    # no name either, because otherwise the name attribute would be ignored
-    my $prev = $form->find_input(
-        $self->{name} || \undef, $self->{type},
-        $self->{idx}
-    );
-    return $self->SUPER::add_to_form($form) unless $prev;
-
-    # merge menus
-    $prev->{current} = @{ $prev->{menu} } if exists $self->{current};
-    push( @{ $prev->{menu} }, $m );
-}
-
-sub fixup {
-    my $self = shift;
-    if ( $self->{type} eq "option" && !( exists $self->{current} ) ) {
-        $self->{current} = 0;
-    }
-    $self->{menu}[ $self->{current} ]{seen}++ if exists $self->{current};
-}
-
-sub disabled {
-    my $self = shift;
-    my $type = $self->type;
-
-    my $old = $self->{disabled} || _menu_all_disabled( @{ $self->{menu} } );
-    if (@_) {
-        my $v = shift;
-        $self->{disabled} = $v;
-        for ( @{ $self->{menu} } ) {
-            $_->{disabled} = $v;
-        }
-    }
-    return $old;
-}
-
-sub _menu_all_disabled {
-    for (@_) {
-        return 0 unless $_->{disabled};
-    }
-    return 1;
-}
-
-sub value {
-    my $self = shift;
-    my $old;
-    $old = $self->{menu}[ $self->{current} ]{value}
-        if exists $self->{current};
-    $old = $self->{value} if exists $self->{value};
-    if (@_) {
-        my $i   = 0;
-        my $val = shift;
-        my $cur;
-        my $disabled;
-        for ( @{ $self->{menu} } ) {
-            if (
-                (
-                       defined($val)
-                    && defined( $_->{value} )
-                    && $val eq $_->{value}
-                )
-                || ( !defined($val) && !defined( $_->{value} ) )
-            ) {
-                $cur      = $i;
-                $disabled = $_->{disabled};
-                last unless $disabled;
-            }
-            $i++;
-        }
-        if ( !( defined $cur ) || $disabled ) {
-            if ( defined $val ) {
-
-                # try to search among the alternative names as well
-                my $i = 0;
-                my $cur_ignorecase;
-                my $lc_val = lc($val);
-                for ( @{ $self->{menu} } ) {
-                    if ( defined $_->{name} ) {
-                        if ( $val eq $_->{name} ) {
-                            $disabled = $_->{disabled};
-                            $cur      = $i;
-                            last unless $disabled;
-                        }
-                        if ( !defined($cur_ignorecase)
-                            && $lc_val eq lc( $_->{name} ) ) {
-                            $cur_ignorecase = $i;
-                        }
-                    }
-                    $i++;
-                }
-                unless ( defined $cur ) {
-                    $cur = $cur_ignorecase;
-                    if ( defined $cur ) {
-                        $disabled = $self->{menu}[$cur]{disabled};
-                    }
-                    elsif ( $self->{strict} ) {
-                        my $n = $self->name;
-                        Carp::croak("Illegal value '$val' for field '$n'");
-                    }
-                }
-            }
-            elsif ( $self->{strict} ) {
-                my $n = $self->name;
-                Carp::croak("The '$n' field can't be unchecked");
-            }
-        }
-        if ( $self->{strict} && $disabled ) {
-            my $n = $self->name;
-            Carp::croak("The value '$val' has been disabled for field '$n'");
-        }
-        if ( defined $cur ) {
-            $self->{current} = $cur;
-            $self->{menu}[$cur]{seen}++;
-            delete $self->{value};
-        }
-        else {
-            $self->{value} = $val;
-            delete $self->{current};
-        }
-    }
-    $old;
-}
 
 =item $input->check
 
@@ -1393,84 +993,11 @@ The input can be turned off with:
 
     $input->value(undef);
 
-=cut
-
-sub check {
-    my $self = shift;
-    $self->{current} = 1;
-    $self->{menu}[1]{seen}++;
-}
-
-sub possible_values {
-    my $self = shift;
-    map $_->{value}, grep !$_->{disabled}, @{ $self->{menu} };
-}
-
-sub other_possible_values {
-    my $self = shift;
-    map $_->{value}, grep !$_->{seen} && !$_->{disabled}, @{ $self->{menu} };
-}
-
-sub value_names {
-    my $self = shift;
-    my @names;
-    for ( @{ $self->{menu} } ) {
-        my $n = $_->{name};
-        $n = $_->{value} unless defined $n;
-        push( @names, $n );
-    }
-    @names;
-}
-
-#---------------------------------------------------
-package HTML::Form::SubmitInput;
-@HTML::Form::SubmitInput::ISA = qw(HTML::Form::Input);
-
-#input/image
-#input/submit
-
 =item $input->click($form, $x, $y)
 
 Some input types (currently "submit" buttons and "images") can be
 clicked to submit the form.  The click() method returns the
 corresponding L<HTTP::Request> object.
-
-=cut
-
-sub click {
-    my ( $self, $form, $x, $y ) = @_;
-    for ( $x, $y ) { $_ = 1 unless defined; }
-    local ( $self->{clicked} ) = [ $x, $y ];
-    local ( $self->{value} )   = "" unless defined $self->value;
-    return $form->make_request;
-}
-
-sub form_name_value {
-    my $self = shift;
-    return unless $self->{clicked};
-    return $self->SUPER::form_name_value(@_);
-}
-
-#---------------------------------------------------
-package HTML::Form::ImageInput;
-@HTML::Form::ImageInput::ISA = qw(HTML::Form::SubmitInput);
-
-sub form_name_value {
-    my $self    = shift;
-    my $clicked = $self->{clicked};
-    return unless $clicked;
-    return if $self->{disabled};
-    my $name = $self->{name};
-    $name = ( defined($name) && length($name) ) ? "$name." : "";
-    return (
-        "${name}x" => $clicked->[0],
-        "${name}y" => $clicked->[1]
-    );
-}
-
-#---------------------------------------------------
-package HTML::Form::FileInput;
-@HTML::Form::FileInput::ISA = qw(HTML::Form::TextInput);
 
 =back
 
@@ -1487,29 +1014,12 @@ For security reasons this field will never be initialized from the parsing
 of a form.  This prevents the server from triggering stealth uploads of
 arbitrary files from the client machine.
 
-=cut
-
-sub file {
-    my $self = shift;
-    $self->value(@_);
-}
-
 =item $filename = $input->filename
 
 =item $input->filename( $new_filename )
 
 This get/sets the filename reported to the server during file upload.
 This attribute defaults to the value reported by the file() method.
-
-=cut
-
-sub filename {
-    my $self = shift;
-    my $old  = $self->{filename};
-    $self->{filename} = shift if @_;
-    $old = $self->file unless defined $old;
-    $old;
-}
 
 =item $content = $input->content
 
@@ -1519,14 +1029,6 @@ This get/sets the file content provided to the server during file
 upload.  This method can be used if you do not want the content to be
 read from an actual file.
 
-=cut
-
-sub content {
-    my $self = shift;
-    my $old  = $self->{content};
-    $self->{content} = shift if @_;
-    $old;
-}
 
 =item @headers = $input->headers
 
@@ -1535,68 +1037,6 @@ sub content {
 This get/set additional header fields describing the file uploaded.
 This can for instance be used to set the C<Content-Type> reported for
 the file.
-
-=cut
-
-sub headers {
-    my $self = shift;
-    my $old  = $self->{headers} || [];
-    $self->{headers} = [@_] if @_;
-    @$old;
-}
-
-sub form_name_value {
-    my ( $self, $form ) = @_;
-    return $self->SUPER::form_name_value($form)
-        if $form->method ne "POST"
-        || $form->enctype ne "multipart/form-data";
-
-    my $name = $self->name;
-    return unless defined $name;
-    return if $self->{disabled};
-
-    my $file     = $self->file;
-    my $filename = $self->filename;
-    my @headers  = $self->headers;
-    my $content  = $self->content;
-    my %headers  = @headers;
-    if ( defined $content || grep m/^Content$/i, keys %headers ) {
-        $filename = $file unless defined $filename;
-        $file     = undef;
-        unshift( @headers, "Content" => $content );
-    }
-    elsif ( !defined($file) || length($file) == 0 ) {
-        return;
-    }
-
-    # legacy (this used to be the way to do it)
-    if ( ref($file) eq "ARRAY" ) {
-        my $f  = shift @$file;
-        my $fn = shift @$file;
-        push( @headers, @$file );
-        $file     = $f;
-        $filename = $fn;
-    }
-
-    return ( $name => [ $file, $filename, @headers ] );
-}
-
-package HTML::Form::KeygenInput;
-@HTML::Form::KeygenInput::ISA = qw(HTML::Form::Input);
-
-sub challenge {
-    my $self = shift;
-    return $self->{challenge};
-}
-
-sub keytype {
-    my $self = shift;
-    return lc( $self->{keytype} || 'rsa' );
-}
-
-1;
-
-__END__
 
 =back
 
