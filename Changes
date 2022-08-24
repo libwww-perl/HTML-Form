@@ -2,6 +2,8 @@ Change history for HTML-Form
 
 {{$NEXT}}
     - Perl::Tidy-ed the entire codebase (GH#42) (Julien Fiegehenn)
+    - Split extra packages inside HTML::Form into their own module files
+      and consolidate documentation (GH#43) (Julien Fiegehenn)
 
 6.10      2022-08-22 13:20:12Z
     - Use "croak" instead of "die" to show errors from the perspective of the
