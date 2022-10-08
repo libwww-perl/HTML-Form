@@ -2,8 +2,9 @@
 
 use strict;
 use warnings;
-use Test::More tests => 7;
-use HTML::Form;
+use Test::More;
+use HTML::Form ();
+use Test::Warnings qw(warning);
 
 my $html = '<html><body><form></form></body></html>';
 
@@ -29,13 +30,13 @@ ok(
 like( $@, qr/Invalid index a/, 'exception text' );
 
 {
-    my @warnings;
-    local $SIG{__WARN__} = sub { push @warnings, shift };
-    my @inputs = $form->find_input( 'submit', 'input', 1 );
-    is( scalar @warnings, 1, 'warns' );
-    is(
-        $warnings[0],
-        "find_input called in list context with index specified\n",
+    like(
+        warning {
+            my @inputs = $form->find_input( 'submit', 'input', 1 );
+        },
+        qr/^find_input called in list context with index specified/,
         'warning text'
     );
 }
+
+done_testing;
