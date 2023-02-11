@@ -4,7 +4,7 @@ HTML::Form - Class that represents an HTML form element
 
 # VERSION
 
-version 6.10
+version 6.11
 
 # SYNOPSIS
 
@@ -300,9 +300,13 @@ The following methods are available:
     useful for debugging.  If called in void context, then the dump is
     printed on STDERR.
 
+# NAME
+
+HTML::Form - Class that represents an HTML form element
+
 # INPUTS
 
-An `HTML::Form` objects contains a sequence of _inputs_.  References to
+An `HTML::Form` object contains a sequence of _inputs_.  References to
 the inputs can be obtained with the $form->inputs or $form->find\_input
 methods.
 
