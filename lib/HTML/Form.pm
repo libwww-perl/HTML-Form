@@ -13,7 +13,7 @@ use HTML::Form::ImageInput  ();
 use HTML::Form::FileInput   ();
 use HTML::Form::KeygenInput ();
 
-our $VERSION = '6.11';
+our $VERSION = '6.12';
 
 my %form_tags = map { $_ => 1 } qw(input textarea button select option);
 

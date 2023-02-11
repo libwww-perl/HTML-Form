@@ -3,7 +3,7 @@ package HTML::Form::IgnoreInput;
 use strict;
 use parent 'HTML::Form::Input';
 
-our $VERSION = '6.11';
+our $VERSION = '6.12';
 
 # ABSTRACT: An HTML form ignored input element for use with HTML::Form
 
