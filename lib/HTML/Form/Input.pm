@@ -113,6 +113,8 @@ sub form_name_value {
     return if $self->disabled;
     my $value = $self->value;
     return unless defined $value;
+    s/\x0d?\x0a|\x0d/\x0d\x0a/g
+      for $name, $value;
     return ( $name => $value );
 }
 
