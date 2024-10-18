@@ -2,7 +2,7 @@ package HTML::Form::Input;
 
 use strict;
 
-our $VERSION = '6.12';
+our $VERSION = '6.13';
 
 # ABSTRACT: A generic HTML form input element for use with HTML::Form
 

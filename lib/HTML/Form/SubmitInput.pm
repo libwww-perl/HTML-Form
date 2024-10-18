@@ -3,7 +3,7 @@ package HTML::Form::SubmitInput;
 use strict;
 use parent 'HTML::Form::Input';
 
-our $VERSION = '6.12';
+our $VERSION = '6.13';
 
 # ABSTRACT: An HTML form submit input element for use with HTML::Form
 

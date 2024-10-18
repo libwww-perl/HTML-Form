@@ -1,5 +1,7 @@
 Change history for HTML-Form
 
+{{$NEXT}}
+
 6.12      2024-10-18 16:19:06Z
     - Fix CRLF normalization with HTTP::Message 7.00 (GH#53) (Graham Knop)
 
