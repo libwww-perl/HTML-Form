@@ -5,7 +5,7 @@ use parent 'HTML::Form::Input';
 
 use Carp 'croak';
 
-our $VERSION = '6.13';
+our $VERSION = '6.14';
 
 # ABSTRACT: An HTML form list input element for use with HTML::Form
 
