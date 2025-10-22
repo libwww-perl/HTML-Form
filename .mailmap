@@ -1,0 +1,20 @@
+# .mailmap file to consolidate author/committer identities
+# Format: Canonical Name <canonical@email> <old.name@old.email>
+
+# Gisle Aas - multiple email addresses
+Gisle Aas <gisle.aas@it.uib.no> <aas@oslonett.no>
+Gisle Aas <gisle.aas@it.uib.no> <gisle@aas.no>
+Gisle Aas <gisle.aas@it.uib.no> <gisle@baux-2.lan>
+
+# Mark Stosberg - multiple email addresses
+Mark Stosberg <mark@stosberg.com> <MARKSTOS@cpan.org>
+Mark Stosberg <mark@stosberg.com> <mark@summersault.com>
+
+# Mike Schilli - name variation
+Mike Schilli <mschilli@yahoo-inc.com> <mschilli <github@perlmeister.com>
+
+# Ville Skyttä - accent variation
+Ville Skyttä <ville.skytta@iki.fi> <ville.skytta@iki.fi>
+
+# Slaven Rezic - multiple email addresses
+Slaven Rezic <slaven@rezic.de> <srezic@iconmobile.com>
