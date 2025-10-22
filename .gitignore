@@ -10,3 +10,5 @@ t/CAN_TALK_TO_OURSELF
 t/live/ENABLED
 .vscode
 xx*
+MYMETA.json
+MYMETA.yml
